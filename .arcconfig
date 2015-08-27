@@ -1,0 +1,5 @@
+{
+  "project.name"        : "athena",
+  "repository.callsign" : "ATHENA",
+  "phabricator.uri"     : "https://phabricator.haskell.org"
+}

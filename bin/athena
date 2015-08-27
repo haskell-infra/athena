@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+unset CDPATH
+
+## -----------------------------------------------------------------------------
+## -- Setup
+
+canonical=$(cd -P -- "$(dirname -- "$0")" && \
+            printf '%s\n' "$(pwd -P)/$(basename -- "$0")")
+ATHENA_BINDIR=$(dirname -- "$canonical")
+ATHENA_SRCDIR=$(dirname -- "$ATHENA_BINDIR")
+ATHENA_LIBEXEC=$ATHENA_BINDIR/libexec
+
+## bashmenot
+BASHMENOT_LOG_TIMESTAMP=1
+BASHMENOT_NO_SELF_UPDATE=1
+. $ATHENA_BINDIR/bashmenot/src.sh
+
+## Athena source
+. $ATHENA_SRCDIR/rackspace-creds.conf || exit 1
+. $ATHENA_BINDIR/libexec/ssh.sh
+. $ATHENA_BINDIR/libexec/configuration.sh
+. $ATHENA_BINDIR/libexec/assimilate-rackspace.sh
+
+## Global variables
+HELP=0
+ASSIMILATE=0
+NEWHOST=
+
+## -----------------------------------------------------------------------------
+## -- Actions
+
+## Helping
+function help {
+  TXT=$(cat <<EOF
+usage: athena [option]*
+
+actions:
+  TODO FIXME
+EOF
+)
+  echo "$TXT" && exit 0
+}
+
+## -- Assimilate a new virtual machine we create
+function assimilate {
+  rackspace_assimilate $1
+  exit 0
+}
+
+## -- List all servers with 'athena--' as their name
+function list_servers {
+  rackspace_list_servers
+  exit 0
+}
+
+## -----------------------------------------------------------------------------
+## -- Main driver
+
+HELP=0
+CREATE=0
+NEWHOST=
+LIST_SERVERS=0
+
+while [[ $# > 0 ]]
+do
+  key="$1"
+  case $key in
+      -h|--help|help)
+      HELP=1
+      ;;
+
+      -c|--create)
+      CREATE=1
+      NEWHOST="$2"
+      shift
+      ;;
+
+      -l|--list-servers)
+      LIST_SERVERS=1
+      ;;
+
+      *)
+      # unknown option
+      log_error "Unrecognized argument: $key (try --help)" && exit 1
+      ;;
+  esac
+  shift
+done
+
+if [ "$HELP" = "1" ];         then help; fi
+if [ "$CREATE" = "1" ];       then assimilate $NEWHOST; fi
+if [ "$LIST_SERVERS" = "1" ]; then list_servers; fi
+
+# Error out
+log_error "Requires an argument" && exit 1
