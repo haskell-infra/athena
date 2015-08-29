@@ -31,7 +31,9 @@
   nix.useChroot     = true;
   nix.buildCores    = 0;
   nix.nrBuildUsers  = 32;
+  nix.trustedBinaryCaches  = [ "https://cache.nixos.org" "https://hydra.nixos.org" ];
   nix.binaryCaches  = [ "https://cache.nixos.org" "https://hydra.nixos.org" ];
+  nix.binaryCachePublicKeys = [ "hydra.nixos.org-1:CNHJZBh9K4tP3EKF6FkkgeVYsS3ohTl+oS0Qa8bezVs=" ];
   nix.extraOptions  = ''
     auto-optimise-store = true
   '';
@@ -60,35 +62,33 @@
     [ { from = 60000; to = 61000; } ]; # Mosh port ranges
 
   environment.systemPackages = with pkgs; [];
-#    [ binutils
-#      cacert
-#      checksec
-#      emacs24-nox
-#      file
-#      git
-#      htop
-#      iotop
-#      lsof
-#      mosh
-#      openssl
-#      psmisc
-#      linuxPackages.perf
-#      reptyr
-#      scrypt
-#      silver-searcher
-#      tmux
-#      unzip
-#      vim
-#      wget
-#      xz
-#      zsh
-#    ];
+    [ binutils
+      cacert
+      checksec
+      emacs24-nox
+      file
+      git
+      htop
+      iotop
+      lsof
+      mosh
+      openssl
+      psmisc
+      linuxPackages.perf
+      reptyr
+      scrypt
+      silver-searcher
+      tmux
+      unzip
+      vim
+      wget
+      xz
+      zsh
+    ];
 
   ## -- Package/time configuration
   nixpkgs.config = import ../nixpkgs/config.nix;
   time.timeZone = "America/Chicago";
-
-  security.sudo.wheelNeedsPassword = false;
 
   ## -- Users
   users.extraUsers.a = {
